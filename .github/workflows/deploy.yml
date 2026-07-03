@@ -24,7 +24,7 @@ jobs:
 
     - name: 4. Ejecutar Pruebas Unitarias (CI)
       run: |
-        pytest tests/
+        python -m pytest tests/
 
     - name: 5. Configurar credenciales de AWS
       uses: aws-actions/configure-aws-credentials@v4
