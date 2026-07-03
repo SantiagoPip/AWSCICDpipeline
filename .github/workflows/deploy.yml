@@ -1,0 +1,42 @@
+name: Pipeline CI/CD Data
+
+on:
+  push:
+    branches: [ main ]  # Se dispara CADA VEZ que haces push a la rama main
+
+jobs:
+  entorno-cicd:
+    runs-on: ubuntu-latest  # Crea una máquina virtual Linux temporal
+
+    steps:
+    - name: 1. Descargar código del repositorio
+      uses: actions/checkout@v4
+
+    - name: 2. Instalar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: 3. Instalar librerías de prueba
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 4. Ejecutar Pruebas Unitarias (CI)
+      run: |
+        pytest tests/
+
+    - name: 5. Configurar credenciales de AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1  # Cambia por tu región
+
+    - name: 6. Empaquetar y Desplegar en AWS Lambda (CD)
+      run: |
+        # Creamos un zip limpio excluyendo herramientas de desarrollo locales
+        zip -r deploy_package.zip lambda_function.py src/
+        
+        # Subimos el código directamente a tu Lambda usando la AWS CLI integrada en GitHub
+        aws lambda update-function-code --function-name Tu-Nombre-De-Lambda-En-AWS --zip-file fileb://deploy_package.zip
