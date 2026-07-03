@@ -39,4 +39,4 @@ jobs:
         zip -r deploy_package.zip lambda_function.py src/
         
         # Subimos el código directamente a tu Lambda usando la AWS CLI integrada en GitHub
-        aws lambda update-function-code --function-name Tu-Nombre-De-Lambda-En-AWS --zip-file fileb://deploy_package.zip
+        aws lambda update-function-code --function-name mi-pipeline-lambda --zip-file fileb://deploy_package.zip
